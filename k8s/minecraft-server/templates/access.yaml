@@ -5,3 +5,12 @@ kind: Secret
 metadata:
   name: dockercred
 type: kubernetes.io/dockerconfigjson
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: kubeconfig
+type: Opaque
+stringData:
+  config: |
+{{ .Files.Get "config" | indent 4}}
