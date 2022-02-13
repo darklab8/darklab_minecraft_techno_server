@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ .Values.name }}-pv
+spec:
+  capacity:
+    storage: 40Gi
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: my-local-storage
+  local:
+    path: /mnt/{{ .Values.name }}
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - darklab-cluster
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ .Values.name }}-claim
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: my-local-storage
+  resources:
+    requests:
+      storage: 40Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.name }}-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.name }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.name }}
+    spec:
+      volumes:
+      - name: www-persistent-storage
+        persistentVolumeClaim:
+          claimName: {{ .Values.name }}-claim
+      containers:
+        - name: {{ .Values.name }}-pod
+          image: ubuntu:20.04
+          workingDir: /app
+          command: ["java"]
+          args: ["-Xmx6000m","-jar custom.jar"]
+          # command: [ "/bin/bash", "-c", "--" ]
+          # args: [ "while true; do sleep 30; done;" ]
+          ports:
+            - containerPort: 25565
+          volumeMounts:
+            - name: www-persistent-storage
+              mountPath: /app
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.name }}-service
+spec:
+  type: NodePort
+  ports:
+    - name: tcp
+      port: 25565
+      targetPort: 25565
+      nodePort: {{ .Values.nodePort }}
+  selector:
+    app: {{ .Values.name }}

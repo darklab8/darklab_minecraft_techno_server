@@ -1,0 +1,18 @@
+variables:
+  CI_REGISTRY: registry.gitlab.com
+  PIPELINE_RUNNER: registry.gitlab.com/darklab2/darklab_pipeliner/darklab-pipeliner:kubectl-v1.0.3
+  PIPELINE_BUILDING: $CI_REGISTRY_IMAGE/minecraft-techno:v1.0.0
+
+stages:
+  - deploy1
+
+deploying_container:
+  image: ${PIPELINE_RUNNER}
+  stage: deploy1
+  variables:
+    DOCKER_HOST: tcp://dind-service:2375
+  script:
+      - docker ps
+      - docker login $CI_REGISTRY -u $CI_REGISTRY_USER -p $gitlab_api_key
+      - docker build --tag $PIPELINE_BUILDING .
+      - docker push $PIPELINE_BUILDING
