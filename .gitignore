@@ -1,11 +1,2 @@
-config/
-crash-reports/
-logs/
-plugins/LoginSecurity/
-plugins/PluginMetrics
-plugins/Updater
-plugins/WorldEdit
-plugins/WorldGuard
-stable-mods/
-world/
-data/
+backups/
+.git/

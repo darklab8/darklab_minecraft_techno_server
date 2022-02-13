@@ -12,12 +12,12 @@
 
 config-version: 5
 settings:
+  bungeecord: false
+  late-bind: false
   timeout-time: 90
   restart-on-crash: true
   restart-script: ./start.sh
   netty-threads: 4
-  bungeecord: false
-  late-bind: false
   sample-count: 12
   player-shuffle: 0
 messages:
@@ -43,6 +43,7 @@ world-settings:
       monsters: 48
       misc: 32
       other: 64
+    nerf-spawner-mobs: false
     growth:
       cactus-modifier: 100
       cane-modifier: 100
@@ -60,8 +61,6 @@ world-settings:
       hopper-check: 8
     random-light-updates: false
     save-structure-info: true
-    max-bulk-chunks: 5
-    max-entity-collisions: 8
     anti-xray:
       enabled: true
       engine-mode: 1
@@ -82,14 +81,15 @@ world-settings:
       replace-blocks:
       - 1
       - 5
-    nerf-spawner-mobs: false
-    zombie-aggressive-towards-villager: true
-    arrow-despawn-rate: 1200
+    max-bulk-chunks: 5
+    max-entity-collisions: 8
+    chunks-per-tick: 650
+    clear-tick-list: false
+    enable-zombie-pigmen-portal-spawns: true
     item-despawn-rate: 6000
     merge-radius:
       item: 2.5
       exp: 3.0
-    enable-zombie-pigmen-portal-spawns: true
     view-distance: 4
-    chunks-per-tick: 650
-    clear-tick-list: false
+    zombie-aggressive-towards-villager: true
+    arrow-despawn-rate: 1200

@@ -1,9 +1,7 @@
 FROM ubuntu:20.04
 
 # Create directories app_home and static directories
-ENV APP_HOME=/app
-RUN mkdir $APP_HOME
-WORKDIR $APP_HOME
+WORKDIR /app
 
 RUN apt update
 RUN apt-get install -y openjdk-8-jre
@@ -30,4 +28,4 @@ COPY whitelist.json whitelist.json
 COPY banned-players.json banned-players.json
 COPY banned-ips.json banned-ips.json
 
-CMD java -jar custom.jar
+CMD java -Xmx3500m -jar custom.jar

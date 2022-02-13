@@ -11,6 +11,7 @@ services:
       - ./data/config:/app/config
       - ./data/crash-reports:/app/crash-reports
       - ./data/logs:/app/logs
+      - ./data/plugins:/app/plugins
 
       - ./help.yml:/app/help.yml
       - ./commands.yml:/app/commands.yml
