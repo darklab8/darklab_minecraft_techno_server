@@ -45,24 +45,28 @@ spec:
     type: RollingUpdate
     rollingUpdate:
       maxUnavailable: 1
-      maxSurge: 1
+      maxSurge: 0
   template:
     metadata:
       labels:
         app: {{ .Values.name }}
     spec:
+      imagePullSecrets:
+        - name: dockercred
       volumes:
       - name: www-persistent-storage
         persistentVolumeClaim:
           claimName: {{ .Values.name }}-claim
       containers:
         - name: {{ .Values.name }}-pod
-          image: ubuntu:20.04
+          image: registry.gitlab.com/darklab2/darklab_techno_server/minecraft-techno:v1.0.0
           workingDir: /app
-          command: ["java"]
-          args: ["-Xmx6000m","-jar custom.jar"]
+          # command: ["java"]
+          # args: ["-Xmx6000m","-jar custom.jar"]
           # command: [ "/bin/bash", "-c", "--" ]
           # args: [ "while true; do sleep 30; done;" ]
+          stdin: true
+          tty: true
           ports:
             - containerPort: 25565
           volumeMounts:

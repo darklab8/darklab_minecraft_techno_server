@@ -1,0 +1,7 @@
+apiVersion: v1
+data:
+  .dockerconfigjson: {{ .Values.dockerconfigjson }}
+kind: Secret
+metadata:
+  name: dockercred
+type: kubernetes.io/dockerconfigjson
