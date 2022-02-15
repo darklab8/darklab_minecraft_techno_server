@@ -18,7 +18,7 @@ deploying_container:
       - docker build --tag $PIPELINE_BUILDING .
       - docker push $PIPELINE_BUILDING
 
-deploying_container:
+deploying_helm:
   image: ${PIPELINE_RUNNER}
   stage: deploy2
   variables:
@@ -27,5 +27,5 @@ deploying_container:
       - cd k8s/minecraft-server
       - helm lint . --set dockerconfigjson="$dockerconfigjson"
       - python3 install.py --dockerconfigjson="$dockerconfigjson"
-rules:
-  - when: manual
+  # rules:
+  #   - when: manual
