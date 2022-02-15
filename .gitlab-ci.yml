@@ -5,6 +5,7 @@ variables:
 
 stages:
   - deploy1
+  - deploy2
 
 deploying_container:
   image: ${PIPELINE_RUNNER}
@@ -16,3 +17,15 @@ deploying_container:
       - docker login $CI_REGISTRY -u $CI_REGISTRY_USER -p $gitlab_api_key
       - docker build --tag $PIPELINE_BUILDING .
       - docker push $PIPELINE_BUILDING
+
+deploying_container:
+  image: ${PIPELINE_RUNNER}
+  stage: deploy2
+  variables:
+    DOCKER_HOST: tcp://dind-service:2375
+  script:
+      - cd k8s/minecraft-server
+      - helm lint . --set dockerconfigjson="$dockerconfigjson"
+      - python3 install.py --dockerconfigjson="$dockerconfigjson"
+rules:
+  - when: manual

@@ -2,9 +2,9 @@ import os
 import argparse
 
 my_parser = argparse.ArgumentParser(description='')
-my_parser.add_argument('--dockerconfig',
+my_parser.add_argument('--dockerconfigjson',
                        type=str,
-                       help='dockerconfig') 
+                       help='dockerconfigjson') 
 args = my_parser.parse_args()
 
 def shell(cmd):
@@ -15,4 +15,4 @@ def shell(cmd):
         exit(status_code)
 
 
-shell(f'helm upgrade --install --create-namespace --namespace minecraft-techno-prod minecraft-server . --set dockerconfigjson={args.dockerconfig}')
+shell(f'helm upgrade --install --create-namespace --namespace minecraft-techno-prod minecraft-server . --set dockerconfigjson={args.dockerconfigjson}')

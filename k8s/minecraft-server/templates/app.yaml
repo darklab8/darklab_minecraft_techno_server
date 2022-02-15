@@ -90,6 +90,8 @@ metadata:
   name: restart-minecraft-techno
 spec:
   schedule: "0 10 * * *"
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 2
   jobTemplate:
     spec:
       template:
