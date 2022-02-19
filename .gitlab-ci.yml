@@ -24,6 +24,8 @@ deploying_helm:
   variables:
     DOCKER_HOST: tcp://dind-service:2375
   script:
+      - 'echo "testing_var: $testing_var" > test.txt' 
+      - cat test.txt
       - cd k8s/minecraft-server
       - 'echo "dockerconfigjson: $dockerconfigjson" > secrets.yaml'
       - 'echo "watcher_webhook: $watcher_webhook" >> secrets.yaml'
