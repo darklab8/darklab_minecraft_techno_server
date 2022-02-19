@@ -1,0 +1,107 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: watcher-conf
+data:
+  redis.conf: |
+    bind 0.0.0.0
+    port 6379
+  watcher.py: |
+{{ .Files.Get "watcher.py" | indent 4}}
+  requirements.txt: |
+{{ .Files.Get "requirements.txt" | indent 4}}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-watcher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis-watcher
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: redis-watcher
+    spec:
+      volumes:
+        - name: volmap
+          configMap:
+            name: watcher-conf
+      containers:
+        - name: redis-watcher-pod
+          image: redis:6.2.6-alpine
+          ports:
+            - containerPort: 6379
+          command:
+            [
+              "redis-server",
+              "/etc/configs/redis.conf",
+              "--requirepass",
+              {{ .Values.watcher_redis_password | quote }},
+            ]
+          volumeMounts:
+            - name: volmap
+              mountPath: /etc/configs
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-watcher
+spec:
+  ports:
+    - port: 6379
+      targetPort: 6379
+  selector:
+    app: redis-watcher
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: watcher-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: watcher
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: watcher
+    spec:
+      imagePullSecrets:
+        - name: dockercred
+      volumes:
+        - name: secret-vol
+          secret:
+            secretName: kubeconfig
+        - name: volmap
+          configMap:
+            name: watcher-conf
+      containers:
+        - name: watcher-pod
+          image: registry.gitlab.com/darklab2/darklab_pipeliner/darklab-pipeliner:kubectl-v1.0.3
+          workingDir: /app
+          # command: [ "sh", "-c", "--" ]
+          # args: [ "while true; do sleep 30; done;" ]
+          command: [ "sh", "-c", "--" ]
+          args: [ "pip install -r requirements.txt; python3 watcher.py" ]
+          volumeMounts:
+            - name: secret-vol
+              mountPath: "/root/.kube"
+            - name: volmap
+              mountPath: /app/watcher.py
+              subPath: watcher.py
+            - name: volmap
+              mountPath: /app/requirements.txt
+              subPath: requirements.txt
+          env:
+            - name: REDIS_PASS
+              value: {{.Values.watcher_redis_password | quote}}
+            - name: WATCHER_WEBHOOK
+              value: {{.Values.watcher_webhook | quote}}

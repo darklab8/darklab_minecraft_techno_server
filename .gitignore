@@ -1,3 +1,4 @@
 backups/
 .git/
 k8s/minecraft-server/config
+k8s/minecraft-server/secrets.yaml
