@@ -25,9 +25,9 @@ deploying_helm:
     DOCKER_HOST: tcp://dind-service:2375
   script:
       - cd k8s/minecraft-server
-      - echo "dockerconfigjson: $dockerconfigjson" > secrets.yaml
-      - echo "watcher_webhook: $watcher_webhook" >> secrets.yaml
-      - echo "watcher_redis_password: $watcher_redis_password" >> secrets.yaml
+      - 'echo "dockerconfigjson: $dockerconfigjson" > secrets.yaml'
+      - 'echo "watcher_webhook: $watcher_webhook" >> secrets.yaml'
+      - 'echo "watcher_redis_password: $watcher_redis_password" >> secrets.yaml'
       - helm lint . --values=secrets.yaml
       - python3 install.py --values=secrets.yaml
   # rules:
