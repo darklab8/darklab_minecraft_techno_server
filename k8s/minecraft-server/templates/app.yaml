@@ -56,7 +56,7 @@ spec:
           claimName: {{ .Values.name }}-claim
       containers:
         - name: {{ .Values.name }}-pod
-          image: registry.gitlab.com/darklab2/darklab_techno_server/minecraft-techno:v1.0.0
+          image: registry.gitlab.com/darklab2/darklab_minecraft_techno_server/minecraft-techno:v1.0.0
           workingDir: /app
           # command: ["java"]
           # args: ["-Xmx6000m","-jar custom.jar"]
